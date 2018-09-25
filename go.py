@@ -37,7 +37,7 @@ class Board(object):
                               dtype=np.int8
                               )
 
-    def print_board(self):
+    def display(self):
         print('\n\n')
         str_board = np.array([[self.p_symbol[val] for val in row] for row in self.board])
         print('  '.join(['   A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S']))
@@ -45,7 +45,7 @@ class Board(object):
             new_line = np.concatenate(([str(index+1)], line, [str(index+1)]))
             print('  '.join(new_line))
 
-        print('  '.join(['   A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S']))
+        print('  '.join(['\tA', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S']))
 
     def get_vertex(self, coordinate):
         # TODO what if a user wrongly keys in
