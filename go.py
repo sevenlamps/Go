@@ -1,6 +1,5 @@
 import numpy as np
-
-BOARD_SIZE = (19, 19)
+from constants import *
 
 
 class Board(object):
@@ -15,18 +14,10 @@ class Board(object):
                        '12': 11, '13': 12, '14': 13, '15': 14, '16': 15, '17': 16, '18': 17, '19': 18
                        }
 
-        self.reset()
-
         self.board = np.zeros(BOARD_SIZE, dtype=np.int8)
 
         self.captured_b = 0
         self.captured_w = 0
-
-    def reset(self):
-        self.board = np.zeros(BOARD_SIZE, dtype=np.int8)
-        self.captured_b = 0
-        self.captured_w = 0
-        return
 
     def get_vertex(self, coordinate):
         # TODO what if a user wrongly keys in

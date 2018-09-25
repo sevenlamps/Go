@@ -1,16 +1,20 @@
 import logging
 import numpy as np
 from go import Board
+import threading
+from constants import *
 
 
 class Engine(object):
-
-    PROTOCOL_VERSION = 2
-    NAME = 'PyGo'
-    VERSION = '0.1'
-
     def __init__(self, move_stack, komi, time_settings):
-        self.board = Board()
+        """
+        Initialization of new engine
+        :param move_stack: vertex*[] vertices of move
+        :param komi:
+        :param time_settings:
+        """
+        self.go = Board()
+        self.default_board_size = BOARD_SIZE
         self.move_stack = move_stack
         self.komi = komi
         self.time_settings = time_settings
@@ -22,7 +26,7 @@ class Engine(object):
         For gtp specification 2.
         :return: int version number - Version of the GTP Protocol
         """
-        return self.PROTOCOL_VERSION
+        return PROTOCOL_VERSION
 
     def name(self):
         """
@@ -31,7 +35,7 @@ class Engine(object):
         provided by the version command.
         :return: string* name - Name of the engine
         """
-        return self.NAME
+        return NAME
 
     def version(self):
         """
@@ -39,7 +43,7 @@ class Engine(object):
         number should return the empty string.
         :return: string* version - Version of the engine
         """
-        return self.VERSION
+        return VERSION
 
     def known_command(self, command_name):
         """
@@ -64,17 +68,18 @@ class Engine(object):
 
     def quit(self):
         """
-        The full response of this command must be sent before the
-        engine closes the connection. The controller must receive
-        the response before the connection is closed on its side.
+        The session is terminated and the connection is closed.
         :return: None
         """
+        # TODO kill connection, currently not useful
+        quit(0)
         return
     # ###################################### End of Administrative Commands ############################################
 
     # ###################################### Setup Commands ############################################################
-    def boardsize(self, size):
+    def set_boardsize(self, size):
         """
+        Originally name in gtp2-spec: boardsize
         In GTP version 1 this command also did the work of
         clear board. This may or may not be true for implementations
         of GTP version 2. Thus the controller must
@@ -84,6 +89,7 @@ class Engine(object):
         :param size: int size - New size of the board.
         :return: none
         """
+        # TODO currently not useful
         return
 
     def clear_board(self):
@@ -91,14 +97,19 @@ class Engine(object):
 
         :return: None
         """
+        self.go.board = np.zeros(BOARD_SIZE, dtype=np.int8)
+        self.go.captured_b = 0
+        self.go.captured_w = 0
         return
 
-    def komi(self, new_komi):
+    def set_komi(self, new_komi):
         """
+        Originally name in gtp2-spec: komi
         The engine must accept the komi even if it should be ridiculous.
         :param new_komi: float new komi - New value of komi.
         :return:
         """
+        self.komi = new_komi
         return
 
     def fixed_handicap(self, number_of_stones):
@@ -110,6 +121,7 @@ class Engine(object):
         :return:vertex* vertices - A list of the vertices where handicap
         stones have been placed.
         """
+        # TODO currently not useful
         return
 
     def place_free_handicap(self, number_of_stones):
@@ -125,6 +137,7 @@ class Engine(object):
         :return:vertex* vertices - A list of the vertices where handicap
         stones have been placed.
         """
+        # TODO currently not useful
         return
 
     def set_free_handicap(self, vertices):
@@ -139,6 +152,7 @@ class Engine(object):
         stones should be placed on the board.
         :return: None
         """
+        # TODO currently not useful
         return
     # ###################################### End of Setup Commands #####################################################
 
@@ -263,7 +277,7 @@ class Engine(object):
         :return:string*& board - A diagram of the board position.
         """
         print('\n\n')
-        str_board = np.array([[self.board.p_symbol[val] for val in row] for row in self.board.board])
+        str_board = np.array([[self.go.p_symbol[val] for val in row] for row in self.go.board])
         print('  '.join(['\tA', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S']))
         for index, line in enumerate(str_board):
             if index < 9:
