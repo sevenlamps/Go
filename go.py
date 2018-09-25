@@ -5,7 +5,7 @@ BOARD_SIZE = (19, 19)
 
 class Board(object):
     def __init__(self):
-        self.p_max = BOARD_SIZE[0] * BOARD_SIZE[1]  # 19 * 19 board
+        self.size = BOARD_SIZE[0] * BOARD_SIZE[1]  # 19 * 19 board
         self.p_status = {'empty': 0b00, 'black': 0b01, 'white': 0b10, 'dummy': 0b11}
         self.p_symbol = ['.', 'X', 'O', '.']
         self.x_axis = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7, 'I': 8, 'J': 9, 'K': 10,
@@ -15,37 +15,18 @@ class Board(object):
                        '12': 11, '13': 12, '14': 13, '15': 14, '16': 15, '17': 16, '18': 17, '19': 18
                        }
 
-        self.board = np.array([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                               [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                               [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                               [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                               [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                               [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                               [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                               [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                               [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                               [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                               [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                               [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                               [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                               [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                               [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                               [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                               [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                               [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                               [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
-                              dtype=np.int8
-                              )
+        self.reset()
 
-    def display(self):
-        print('\n\n')
-        str_board = np.array([[self.p_symbol[val] for val in row] for row in self.board])
-        print('  '.join(['   A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S']))
-        for index, line in enumerate(str_board):
-            new_line = np.concatenate(([str(index+1)], line, [str(index+1)]))
-            print('  '.join(new_line))
+        self.board = np.zeros(BOARD_SIZE, dtype=np.int8)
 
-        print('  '.join(['\tA', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S']))
+        self.captured_b = 0
+        self.captured_w = 0
+
+    def reset(self):
+        self.board = np.zeros(BOARD_SIZE, dtype=np.int8)
+        self.captured_b = 0
+        self.captured_w = 0
+        return
 
     def get_vertex(self, coordinate):
         # TODO what if a user wrongly keys in
@@ -55,8 +36,14 @@ class Board(object):
 
     def set_vertex(self, coordinate, val):
         # TODO what if a user wrongly keys in
-        x = self.x_axis[coordinate[0].upper()]
-        y = self.y_axis[coordinate[1]]
+        x = self.y_axis[coordinate[1:]]
+        y = self.x_axis[coordinate[0].upper()]
         if self.board[x][y] == 0 and val != 0:
             self.board[x][y] = val
+        return
 
+
+class Vertex(object):
+    def __init__(self):
+        self.stack = {}
+        self.status = {'live': 0, 'seki': 1, 'independent': 2}
