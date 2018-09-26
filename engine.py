@@ -1,34 +1,41 @@
 import logging
 import numpy as np
-from go import Board
+from go import *
 import threading
 from constants import *
 
 
+PROTOCOL_VERSION = 2
+NAME = 'PyGo'
+VERSION = '0.1'
+
+
 class Engine(object):
-    def __init__(self, move_stack, komi, time_settings):
+    def __init__(self, move_stack: Vertex, komi: float, time_settings: int):
         """
         Initialization of new engine
         :param move_stack: vertex*[] vertices of move
         :param komi:
         :param time_settings:
         """
-        self.go = Board()
-        self.default_board_size = BOARD_SIZE
-        self.move_stack = move_stack
-        self.komi = komi
-        self.time_settings = time_settings
-        self.commands = []
+        self.go: Board = Board()
+        self.default_board_size: tuple = BOARD_SIZE
+        self.move_stack: Vertex = move_stack
+        self.komi: float = komi
+        self.time_settings: int = time_settings
+        self.commands: list = []
 
     # ###################################### Administrative Commands ###################################################
-    def protocol_version(self):
+    @staticmethod
+    def protocol_version() -> int:
         """
         For gtp specification 2.
         :return: int version number - Version of the GTP Protocol
         """
         return PROTOCOL_VERSION
 
-    def name(self):
+    @staticmethod
+    def name() -> str:
         """
         E.g. “GNU Go”, “GoLois”, “Many Faces of Go”. The name does
         not include any version information, which is
@@ -37,7 +44,8 @@ class Engine(object):
         """
         return NAME
 
-    def version(self):
+    @staticmethod
+    def version() -> str:
         """
         E.g. “3.1.33”, “10.5”. Engines without a sense of version
         number should return the empty string.
@@ -45,7 +53,7 @@ class Engine(object):
         """
         return VERSION
 
-    def known_command(self, command_name):
+    def known_command(self, command_name) -> bool:
         """
         The protocol makes no distinction between unknown commands
         and known but unimplemented ones. Do not declare
@@ -66,7 +74,8 @@ class Engine(object):
             print(command)
         return
 
-    def quit(self):
+    @staticmethod
+    def quit():
         """
         The session is terminated and the connection is closed.
         :return: None
@@ -97,12 +106,12 @@ class Engine(object):
 
         :return: None
         """
-        self.go.board = np.zeros(BOARD_SIZE, dtype=np.int8)
+        self.go.board = np.zeros(BOARD_SIZE, dtype=int)
         self.go.captured_b = 0
         self.go.captured_w = 0
         return
 
-    def set_komi(self, new_komi):
+    def set_komi(self, new_komi: float):
         """
         Originally name in gtp2-spec: komi
         The engine must accept the komi even if it should be ridiculous.
@@ -157,13 +166,19 @@ class Engine(object):
     # ###################################### End of Setup Commands #####################################################
 
     # ###################################### Core Play Commands ########################################################
-    def play(self, move):
+    def play(self, move: Move):
         """
         Consecutive moves of the same color are not considered
         illegal from the protocol point of view.
         :param move:move move - Color and vertex of the move
         :return:None
         """
+        # TODO what if a user wrongly keys in
+        color, vertex = move.split()
+        color = COLOR[color]
+        x = X_AXIS[vertex[0].upper()]
+        y = Y_AXIS[vertex[1:]]
+        self.go.set(color, (x, y))
         return
 
     def genmove(self, color):
@@ -195,7 +210,7 @@ class Engine(object):
     # ###################################### End of Core Play Commands #################################################
 
     # ###################################### Tournament Commands #######################################################
-    def time_settings(self, main_time, byo_yomi_time, byo_yomi_stones):
+    def time_settings(self, main_time: int, byo_yomi_time: int, byo_yomi_stones: int):
         """
         The interpretation of the parameters is discussed in section
         4.2. The engine must accept the requested values.

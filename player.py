@@ -21,7 +21,7 @@ class Player(object):
         :return: None
         """
         value = board.p_status[self.color]
-        board.set_vertex(coordinate, value)
+        board.set(coordinate, value)
         return
 
     def count(self, board):
