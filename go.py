@@ -4,7 +4,8 @@ from constants import *
 from error import *
 
 
-BOARD_SIZE = (19, 19)
+BOARD_LENGTH = 19
+BOARD_SIZE = (BOARD_LENGTH, BOARD_LENGTH)
 STONE_STATUS = {'live': 0, 'seki': 1, 'independent': 2}
 STONE_SYMBOL = ['.', 'X', 'O', '.']
 COLOR = {'empty': 0b00, 'black': 0b01, 'white': 0b10, 'dummy': 0b11}
@@ -27,54 +28,21 @@ class Board(object):
 
         self.board: np.ndarray = np.zeros(BOARD_SIZE, dtype=uint)
 
+        self.ko_point: List[Point]
+
         self.captured_b: uint
-        self.captured_w = uint
+        self.captured_w: uint
 
-    def get(self, x: int, y: int) -> int:
+    def get(self, p: Point) -> uint:
         # TODO what if a user wrongly keys in
-        return self.board[x][y]
+        return self.board[p.x][p.y]
 
-    def set(self, color: int, coordinate: tuple):
+    def set(self, color: int, p: Point):
         # TODO what if a user wrongly keys in
         if color != COLOR['empty'] and color != COLOR['dummy']:
-            x = coordinate[0]
-            y = coordinate[1]
-            if self.board[x][y] != 0:
+            if self.board[p.x][p.y] != 0:
                 raise IllegalMove
             else:
-                self.board[x][y] = color
+                self.board[p.x][p.y] = color
+
         return
-
-
-# class Color(object):
-#     def __init__(self, color: str):
-#         self._color: str = color
-#
-#     def get(self) -> int:
-#         return COLOR[self._color.upper()]
-
-
-# class Vertex(object):
-#     def __init__(self, coordinate: str):
-#         self._coordinate: str = coordinate
-#         self.status: int
-#
-#     def get(self) -> tuple:
-#         if self._coordinate == 'pass':
-#             return PASS
-#         else:
-#             x = X_AXIS[self._coordinate[0].upper()]
-#             y = Y_AXIS[self._coordinate[1]]
-#             return x, y
-
-
-# class Move(object):
-#     def __init__(self, move: str):
-#         self._color = Color(move.split())
-#         self._vertex = vertex
-#
-#     def get(self) -> tuple:
-#         if self._vertex.get() == PASS:
-#             return COLOR['empty'], PASS
-#         else:
-#             return self._color.get(), self._vertex.get()

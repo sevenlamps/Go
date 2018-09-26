@@ -185,7 +185,7 @@ class Engine(object):
         color = COLOR[color]
         y = Y_AXIS[vertex[0].upper()]
         x = X_AXIS[vertex[1:]]
-        self.go.set(color, (x, y))
+        self.go.set(color, Point(x, y))
         self.move_stack.append(move)
         return
 
@@ -200,6 +200,7 @@ class Engine(object):
         :return:vertex|string vertex - Vertex where the move was
         played or the string “resign”.
         """
+        # TODO
         return
 
     def undo(self):
@@ -214,6 +215,10 @@ class Engine(object):
         command among its known commands.
         :return:None
         """
+        vertex = self.move_stack.pop()
+        y = Y_AXIS[vertex[0].upper()]
+        x = X_AXIS[vertex[1:]]
+        self.go.set(0, Point(x, y))
         return
     # ###################################### End of Core Play Commands #################################################
 
