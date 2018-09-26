@@ -1,6 +1,6 @@
 import go
 from go import *
-from player import Player
+from controller import Player
 from engine import Engine
 
 if __name__ == '__main__':

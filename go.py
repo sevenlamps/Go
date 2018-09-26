@@ -1,6 +1,7 @@
 import numpy as np
 from typing import Dict, Tuple, List, NewType
 from constants import *
+from error import *
 
 
 BOARD_SIZE = (19, 19)
@@ -38,7 +39,9 @@ class Board(object):
         if color != COLOR['empty'] and color != COLOR['dummy']:
             x = coordinate[0]
             y = coordinate[1]
-            if self.board[x][y] == 0 and color != 0:
+            if self.board[x][y] != 0:
+                raise IllegalMove
+            else:
                 self.board[x][y] = color
         return
 

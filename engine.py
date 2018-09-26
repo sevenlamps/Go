@@ -3,6 +3,7 @@ import numpy as np
 from go import *
 import threading
 from constants import *
+from error import *
 
 
 PROTOCOL_VERSION = 2
@@ -177,6 +178,10 @@ class Engine(object):
         color, vertex = move.split()
         if vertex.lower() == 'pass':
             return
+        if vertex.lower() == 'resign':
+            # TODO update game status, show the game result
+            print('{} loses!'.format(color))
+            self.quit()
         color = COLOR[color]
         y = Y_AXIS[vertex[0].upper()]
         x = X_AXIS[vertex[1:]]
@@ -269,6 +274,7 @@ class Engine(object):
         :param move_number:int move number - Optional move number.
         :return:None
         """
+        # TODO currently not useful
         return
 
     def reg_genmove(self, color):
