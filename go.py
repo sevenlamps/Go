@@ -5,6 +5,7 @@ from constants import *
 
 BOARD_SIZE = (19, 19)
 STONE_STATUS = {'live': 0, 'seki': 1, 'independent': 2}
+STONE_SYMBOL = ['.', 'X', 'O', '.']
 COLOR = {'empty': 0b00, 'black': 0b01, 'white': 0b10, 'dummy': 0b11}
 
 Y_AXIS = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7, 'I': 8, 'J': 9, 'K': 10,
@@ -20,8 +21,8 @@ PASS = (-1, -1)
 class Board(object):
     def __init__(self):
         self.size: uint = BOARD_SIZE[0] * BOARD_SIZE[1]  # 19 * 19 board
-        self.p_status: dict = {'empty': 0b00, 'black': 0b01, 'white': 0b10, 'dummy': 0b11}
-        self.p_symbol: list = ['.', 'X', 'O', '.']
+        # self.p_status: dict = {'empty': 0b00, 'black': 0b01, 'white': 0b10, 'dummy': 0b11}
+        # self.p_symbol: list = ['.', 'X', 'O', '.']
 
         self.board: np.ndarray = np.zeros(BOARD_SIZE, dtype=uint)
 

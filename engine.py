@@ -11,7 +11,7 @@ VERSION = '0.1'
 
 
 class Engine(object):
-    def __init__(self, move_stack: Vertex, komi: float, time_settings: int):
+    def __init__(self, move_stack: List[Move], komi: float, time_settings: int):
         """
         Initialization of new engine
         :param move_stack: vertex*[] vertices of move
@@ -20,7 +20,7 @@ class Engine(object):
         """
         self.go: Board = Board()
         self.default_board_size: tuple = BOARD_SIZE
-        self.move_stack: Vertex = move_stack
+        self.move_stack: List[Move] = move_stack
         self.komi: float = komi
         self.time_settings: int = time_settings
         self.commands: list = []
@@ -106,7 +106,7 @@ class Engine(object):
 
         :return: None
         """
-        self.go.board = np.zeros(BOARD_SIZE, dtype=int)
+        self.go.board = np.zeros(BOARD_SIZE, dtype=uint)
         self.go.captured_b = 0
         self.go.captured_w = 0
         return
@@ -173,12 +173,15 @@ class Engine(object):
         :param move:move move - Color and vertex of the move
         :return:None
         """
-        # TODO what if a user wrongly keys in
+        # TODO  The number of captured stones is updated if needed and the move is added to the move history
         color, vertex = move.split()
+        if vertex.lower() == 'pass':
+            return
         color = COLOR[color]
-        x = X_AXIS[vertex[0].upper()]
-        y = Y_AXIS[vertex[1:]]
+        y = Y_AXIS[vertex[0].upper()]
+        x = X_AXIS[vertex[1:]]
         self.go.set(color, (x, y))
+        self.move_stack.append(move)
         return
 
     def genmove(self, color):
@@ -292,7 +295,7 @@ class Engine(object):
         :return:string*& board - A diagram of the board position.
         """
         print('\n\n')
-        str_board = np.array([[self.go.p_symbol[val] for val in row] for row in self.go.board])
+        str_board = np.array([[STONE_SYMBOL[val] for val in row] for row in self.go.board])
         print('  '.join(['\tA', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S']))
         for index, line in enumerate(str_board):
             if index < 9:

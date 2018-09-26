@@ -1,5 +1,5 @@
 import numpy as np
-from typing import NewType
+from typing import NewType, List
 
 
 uint = np.uint32
