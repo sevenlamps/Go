@@ -3,6 +3,15 @@ from error import *
 from go import *
 
 
+def opposite_color(color: Color) -> Color:
+    if color == 'black':
+        return Color('white')
+    if color == 'white':
+        return Color('black')
+    else:
+        return color
+
+
 def get_neighbors(p: Point) -> List[Point]:
     neighbors: List[Point] = []
     if p.x > 0:
@@ -17,5 +26,8 @@ def get_neighbors(p: Point) -> List[Point]:
     return neighbors
 
 
-
+def get_liberties(p: Point, color: Color) -> Set[Point]:
+    liberties: Set[Point] = set()
+    flood_fill_color: Color = opposite_color(color)
+    return liberties
 

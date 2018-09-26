@@ -1,5 +1,5 @@
 import numpy as np
-from typing import NewType, List
+from typing import NewType, List, Set
 from collections import namedtuple
 
 

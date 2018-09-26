@@ -27,3 +27,7 @@ class CannotUndo(Error):
     def __init__(self, message):
         self._message = message
 
+
+class InvalidOppositeColor(Error):
+    def __init__(self):
+        pass
