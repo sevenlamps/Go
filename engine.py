@@ -4,6 +4,7 @@ from go import *
 import threading
 from constants import *
 from error import *
+from rule import *
 
 
 PROTOCOL_VERSION = 2
@@ -177,7 +178,7 @@ class Engine(object):
         # TODO  The number of captured stones is updated if needed and the move is added to the move history
         color, vertex = move.split()
         if vertex.lower() == 'pass':
-            return
+            return 0
         if vertex.lower() == 'resign':
             # TODO update game status, show the game result
             print('{} loses!'.format(color))
@@ -185,9 +186,13 @@ class Engine(object):
         color = COLOR[color]
         y = Y_AXIS[vertex[0].upper()]
         x = X_AXIS[vertex[1:]]
-        self.go.set(color, Point(x, y))
-        self.move_stack.append(move)
-        return
+        if not is_legal(self.go, Point(x, y), color):
+            print('Move illegal, play the stone at the other places: ')
+            return 1
+        else:
+            self.go.set_color(color, Point(x, y))
+            self.move_stack.append(move)
+        return 0
 
     def genmove(self, color):
         """
@@ -215,10 +220,12 @@ class Engine(object):
         command among its known commands.
         :return:None
         """
-        vertex = self.move_stack.pop()
+        last_move = self.move_stack.pop()
+        vertex = last_move.split()[1]
+        # print(vertex)
         y = Y_AXIS[vertex[0].upper()]
         x = X_AXIS[vertex[1:]]
-        self.go.set(0, Point(x, y))
+        self.go.set_color(0, Point(x, y))
         return
     # ###################################### End of Core Play Commands #################################################
 

@@ -1,4 +1,4 @@
-from go import Board
+from go import *
 from engine import Engine
 from constants import *
 
@@ -23,8 +23,7 @@ class Player(object):
         :return: None
         """
         player_move: Move = '{} {}'.format(self.color, coordinate)
-        engine.play(player_move)
-        return
+        return engine.play(player_move)
 
     def count(self, board):
         pass
