@@ -23,7 +23,9 @@ class Player(object):
         :return: None
         """
         player_move: Move = '{} {}'.format(self.color, coordinate)
-        return engine.play(player_move)
+        ret: int = engine.play(player_move)
+        engine.showboard()
+        return ret
 
     def count(self, board):
         pass

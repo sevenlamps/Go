@@ -183,15 +183,24 @@ class Engine(object):
             # TODO update game status, show the game result
             print('{} loses!'.format(color))
             self.quit()
-        color = COLOR[color]
+        color_val = COLOR[color]
         y = Y_AXIS[vertex[0].upper()]
         x = X_AXIS[vertex[1:]]
-        if not is_legal(self.go, Point(x, y), color):
+        p = Point(x, y)
+        if not is_legal(self.go, p, color_val):
             print('Move illegal, play the stone at the other places: ')
             return 1
         else:
-            self.go.set_color(color, Point(x, y))
+            self.go.set_color(color_val, p)
             self.move_stack.append(move)
+            for neighbor in get_neighbors(p):
+                if self.go.get_color(neighbor) == color_val * -1:
+                    enemy = get_chain(self.go, neighbor)
+                    if len(enemy.liberties) == 0:
+                        for point in enemy.stones:
+                            self.go.set_color(COLOR['empty'], point)
+                            print('updated')
+                            self.go.update_captured(color_val * -1, len(enemy.stones))
         return 0
 
     def genmove(self, color):
@@ -317,7 +326,7 @@ class Engine(object):
         print('  '.join(['\tA', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S']))
         for index, line in enumerate(str_board):
             if index < 9:
-                new_line = np.concatenate(([str(index+1)+' '], line, [str(index+1)]))
+                new_line = np.concatenate(([str(index + 1)+' '], line, [str(index + 1)]))
             else:
                 new_line = np.concatenate(([str(index + 1)], line, [str(index + 1)]))
             print('  '.join(new_line))

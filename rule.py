@@ -78,9 +78,9 @@ def is_legal(board: Board, p: Point, color_val: int) -> bool:
             enemy: Chain = get_chain(board, neighbor)
             if enemy.in_atari():
                 suicide = False
-                for point in enemy.stones:
-                    board.set_color(COLOR['empty'], point)
-                    board.update_captured(color_val * -1, len(enemy.stones))
+                # for point in enemy.stones:
+                #     board.set_color(COLOR['empty'], point)
+                #     board.update_captured(color_val * -1, len(enemy.stones))
     if suicide:
         return False
     return True
@@ -109,13 +109,13 @@ def get_chain_points(board: Board, p: Point) -> Set[Point]:
                 west = west_of_west
             else:
                 break
-        for var in range(west.y, east.y):
+        for var in range(west.y, east.y + 1):
             p: Point = Point(N.x, var)
             stones.add(p)
             if p.x > 0:
                 if board.get_color(Point(p.x - 1, p.y)) == color_val and p.x not in flood_filled:
                     queue.append(Point(p.x - 1, p.y))
-            if p.x < BOARD_LENGTH:
+            if p.x < BOARD_LENGTH - 1:
                 if board.get_color(Point(p.x + 1, p.y)) == color_val and p.x not in flood_filled:
                     queue.append(Point(p.x + 1, p.y))
         flood_filled.add(N.x)

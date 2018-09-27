@@ -54,8 +54,7 @@ class Board(object):
 
     def set_color(self, color_val: int, p: Point):
         # TODO what if a user wrongly keys in
-        if color_val != COLOR['empty']:
-            self.board[p.x][p.y] = color_val
+        self.board[p.x][p.y] = color_val
         return
 
     def update_captured(self, color_val: int, number_of_stones: int):
