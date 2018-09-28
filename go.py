@@ -44,7 +44,7 @@ class Board(object):
     def __init__(self):
         self.size: uint = BOARD_SIZE[0] * BOARD_SIZE[1]  # 19 * 19 board
         self.board: np.ndarray = np.zeros(BOARD_SIZE, dtype=uint)
-        self.ko_point: Set[Point] = set()
+        self.ko_point: Point = None
         self.captured_b: int = 0
         self.captured_w: int = 0
 

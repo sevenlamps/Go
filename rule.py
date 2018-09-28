@@ -65,7 +65,7 @@ def is_legal(board: Board, p: Point, color_val: int) -> bool:
     if board.get_color(p) != COLOR['empty']:
         return False
     # is p is a ko point
-    if p in board.ko_point:
+    if p == board.ko_point:
         return False
     suicide: bool = True
     for neighbor in get_neighbors(p):

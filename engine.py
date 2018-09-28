@@ -200,7 +200,13 @@ class Engine(object):
                         for point in enemy.stones:
                             self.go.set_color(COLOR['empty'], point)
                             print('updated')
-                            self.go.update_captured(color_val * -1, len(enemy.stones))
+                        self.go.update_captured(color_val * -1, len(enemy.stones))
+                        if len(enemy.stones) == 1:
+                            self.go.ko_point = enemy.stones.pop()
+                        else:
+                            self.go.ko_point = None
+                else:
+                    self.go.ko_point = None
         return 0
 
     def genmove(self, color):
