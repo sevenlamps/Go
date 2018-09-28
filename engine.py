@@ -5,6 +5,7 @@ import threading
 from constants import *
 from error import *
 from rule import *
+import sgf
 
 
 PROTOCOL_VERSION = 2
