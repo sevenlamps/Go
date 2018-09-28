@@ -13,4 +13,5 @@ Typing in Python 3.6: https://docs.python.org/3.6/library/typing.html
 Error in Python 3.6: https://docs.python.org/3.6/tutorial/errors.html 
   
 Algorithms  
-Flood Fill: https://en.wikipedia.org/wiki/Flood_fill
+Flood Fill: https://en.wikipedia.org/wiki/Flood_fill  
+Monte Carlo Tree Search: http://mcts.ai/pubs/mcts-survey-master.pdf  

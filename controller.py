@@ -1,6 +1,7 @@
 from go import *
 from engine import Engine
 from constants import *
+import time
 
 
 IDENTITY = {'human': True, 'computer': False}
