@@ -8,6 +8,7 @@ from rule import *
 import sgf
 
 
+
 PROTOCOL_VERSION = 2
 NAME = 'PyGo'
 VERSION = '0.1'
@@ -275,7 +276,41 @@ class Engine(object):
         ask for the engine’s opinion about the score
         :return:string score - Score as described in section 4.3.
         """
-        return
+        score_black: int = 0
+        score_white: int = 0
+        chains_black: FrozenSet[Chain] = frozenset()
+        chains_white: FrozenSet[Chain] = frozenset()
+        for i, row in enumerate(self.go.board):
+            for j, col in enumerate(row):
+                if self.go.board[i][j] == COLOR['black']:
+                    temp_black: Chain = get_chain(self.go, Point(i, j))
+                    temp_set: FrozenSet[Chain] = frozenset(temp_black)
+                    chains_black.union(temp_set)
+                    # chains_black.add(get_chain(self.go, Point(i, j)))
+                if self.go.board[i][j] == COLOR['white']:
+                    temp_white: Chain = get_chain(self.go, Point(i, j))
+                    temp_wset: FrozenSet[Chain] = frozenset(temp_white)
+                    chains_white.union(temp_wset)
+                    # chains_white.add(get_chain(self.go, Point(i, j)))
+        for chain_black in chains_black:
+            score_black += len(chain_black.stones)
+            chainb_empty: Set[Point]
+            for p_empty in chain_black.liberties:
+                chainb_empty = get_chain_points(self.go, p_empty)
+            score_black += len(chainb_empty)
+        for chain_white in chains_white:
+            score_white += len(chain_white.stones)
+            chainw_empty: Set[Point]
+            for p_empty in chain_white.liberties:
+                chainw_empty = get_chain_points(self.go, p_empty)
+            score_black += len(chainw_empty)
+        score_difference: float = float(score_black - score_white) - self.komi
+        if score_difference > 0:
+            return 'B+{}'.format(score_difference)
+        elif score_black < score_white + self.komi:
+            return 'W+{}'.format(-score_difference)
+        else:
+            return '0'
 
     def final_status_list(self, status):
         """
