@@ -278,19 +278,19 @@ class Engine(object):
         """
         score_black: int = 0
         score_white: int = 0
-        chains_black: FrozenSet[Chain] = frozenset()
-        chains_white: FrozenSet[Chain] = frozenset()
+        chains_black: List[Chain] = []
+        chains_white: List[Chain] = []
         for i, row in enumerate(self.go.board):
             for j, col in enumerate(row):
                 if self.go.board[i][j] == COLOR['black']:
                     temp_black: Chain = get_chain(self.go, Point(i, j))
-                    temp_set: FrozenSet[Chain] = frozenset(temp_black)
-                    chains_black.union(temp_set)
+                    if temp_black not in chains_black:
+                        chains_black.append(temp_black)
                     # chains_black.add(get_chain(self.go, Point(i, j)))
                 if self.go.board[i][j] == COLOR['white']:
                     temp_white: Chain = get_chain(self.go, Point(i, j))
-                    temp_wset: FrozenSet[Chain] = frozenset(temp_white)
-                    chains_white.union(temp_wset)
+                    if temp_white not in chains_white:
+                        chains_white.append(temp_white)
                     # chains_white.add(get_chain(self.go, Point(i, j)))
         for chain_black in chains_black:
             score_black += len(chain_black.stones)
