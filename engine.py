@@ -286,24 +286,24 @@ class Engine(object):
                     temp_black: Chain = get_chain(self.go, Point(i, j))
                     if temp_black not in chains_black:
                         chains_black.append(temp_black)
-                    # chains_black.add(get_chain(self.go, Point(i, j)))
                 if self.go.board[i][j] == COLOR['white']:
                     temp_white: Chain = get_chain(self.go, Point(i, j))
                     if temp_white not in chains_white:
                         chains_white.append(temp_white)
-                    # chains_white.add(get_chain(self.go, Point(i, j)))
         for chain_black in chains_black:
             score_black += len(chain_black.stones)
-            chainb_empty: Set[Point]
+            chainb_empty: Set[Point] = set()
             for p_empty in chain_black.liberties:
-                chainb_empty = get_chain_points(self.go, p_empty)
+                chainb_empty.union(get_chain_points(self.go, p_empty))
             score_black += len(chainb_empty)
+            print('black: {}'.format(score_black))
         for chain_white in chains_white:
             score_white += len(chain_white.stones)
-            chainw_empty: Set[Point]
+            chainw_empty: Set[Point] = set()
             for p_empty in chain_white.liberties:
-                chainw_empty = get_chain_points(self.go, p_empty)
+                chainw_empty.union(get_chain_points(self.go, p_empty))
             score_black += len(chainw_empty)
+            print('white: {}'.format(score_white))
         score_difference: float = float(score_black - score_white) - self.komi
         if score_difference > 0:
             return 'B+{}'.format(score_difference)
