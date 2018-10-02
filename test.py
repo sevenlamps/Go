@@ -43,9 +43,9 @@ i: int = 0
 for number in [str(x) for x in range(1, 20)]:
     for char in 'ABCDEFGHJKLMNOPQRST':
         if i % 2 == 0:
-            player_b.move(new_engine, Vertex(char + number))
-        else:
             player_w.move(new_engine, Vertex(char + number))
+        else:
+            player_b.move(new_engine, Vertex(char + number))
         i += 1
 
 print(new_engine.final_score())

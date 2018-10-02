@@ -57,7 +57,7 @@ class Engine(object):
         """
         return VERSION
 
-    def known_command(self, command_name) -> bool:
+    def known_command(self, command_name: str) -> bool:
         """
         The protocol makes no distinction between unknown commands
         and known but unimplemented ones. Do not declare
@@ -68,15 +68,16 @@ class Engine(object):
         """
         return True if command_name in self.commands else False
 
-    def list_commands(self):
+    def list_commands(self) -> str:
         """
         Include all known commands, including required ones and
         private extensions.
         :return: string& commands - List of commands, one per row
         """
+        ret: str = ''
         for command in self.commands:
-            print(command)
-        return
+            ret += '{}\n'.format(command)
+        return ret
 
     @staticmethod
     def quit():
