@@ -11,6 +11,7 @@ Tromp-Taylor Rule: http://tromp.github.io/go.html
 Programming Language:  
 Typing in Python 3.6: https://docs.python.org/3.6/library/typing.html  
 Error in Python 3.6: https://docs.python.org/3.6/tutorial/errors.html 
+Data model: https://docs.python.org/3.6/reference/datamodel.html  
   
 Algorithms  
 Flood Fill: https://en.wikipedia.org/wiki/Flood_fill  
