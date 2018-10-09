@@ -132,5 +132,15 @@ def get_chain(board: Board, p: Point) -> Chain:
     return Chain(stones, liberties)
 
 
+def is_movable(board: Board, color_val: int) -> bool:
+    for i, row in enumerate(board.board):
+        for j, item in enumerate(row):
+            if is_legal(board, Point(i, j), color_val):
+                return True
+    return False
+
+
+def is_eye(board: Board, p: Point) -> bool:
+    bulk: Set[Point] = get_chain_points(board, p)
 
 

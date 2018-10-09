@@ -1,3 +1,4 @@
+# -*- coding: gbk -*-
 import logging
 import numpy as np
 from go import *
@@ -28,6 +29,7 @@ class Engine(object):
         self.komi: float = komi
         self.time_settings: int = time_settings
         self.commands: list = []
+        self.collection: sgf.Collection = None
 
     # ###################################### Administrative Commands ###################################################
     @staticmethod
@@ -41,7 +43,7 @@ class Engine(object):
     @staticmethod
     def name() -> str:
         """
-        E.g. ‚ÄúGNU Go‚Äù, ‚ÄúGoLois‚Äù, ‚ÄúMany Faces of Go‚Äù. The name does
+        E.g. °∞GNU Go°±, °∞GoLois°±, °∞Many Faces of Go°±. The name does
         not include any version information, which is
         provided by the version command.
         :return: string* name - Name of the engine
@@ -51,7 +53,7 @@ class Engine(object):
     @staticmethod
     def version() -> str:
         """
-        E.g. ‚Äú3.1.33‚Äù, ‚Äú10.5‚Äù. Engines without a sense of version
+        E.g. °∞3.1.33°±, °∞10.5°±. Engines without a sense of version
         number should return the empty string.
         :return: string* version - Version of the engine
         """
@@ -63,8 +65,8 @@ class Engine(object):
         and known but unimplemented ones. Do not declare
         a command as known if it is known not to work.
         :param command_name: string command name - Name of a command
-        :return: boolean known - ‚Äútrue‚Äù if the command is known by
-        the engine, ‚Äúfalse‚Äù otherwise
+        :return: boolean known - °∞true°± if the command is known by
+        the engine, °∞false°± otherwise
         """
         return True if command_name in self.commands else False
 
@@ -146,7 +148,7 @@ class Engine(object):
         in section 4.1.2. The controller can check this by counting
         the number of vertices in the response. The handicap
         stones are not included in the move history. Vertices must
-        not be repeated or include ‚Äúpass‚Äù.
+        not be repeated or include °∞pass°±.
         :param number_of_stones:
         :return:vertex* vertices - A list of the vertices where handicap
         stones have been placed.
@@ -161,7 +163,7 @@ class Engine(object):
         the number of board vertices minus one. The engine must
         accept the handicap placement. The handicap stones are
         not included in the move history. Vertices must not be
-        repeated or include ‚Äúpass‚Äù.
+        repeated or include °∞pass°±.
         :param vertices: vertex* vertices - A list of vertices where handicap
         stones should be placed on the board.
         :return: None
@@ -179,16 +181,19 @@ class Engine(object):
         :return:None
         """
         # TODO  The number of captured stones is updated if needed and the move is added to the move history
-        color, vertex = move.split()
-        if vertex.lower() == 'pass':
+        # color, vertex = move.split()
+        color: Color = Color(move[0])
+        vertex: Vertex = Vertex(move[1:])
+        if vertex.lower() == 'pass' or vertex.lower() == 'p':
             return 0
-        if vertex.lower() == 'resign':
+        if vertex.lower() == 'resign' or vertex.lower() == 'r':
             # TODO update game status, show the game result
             print('{} loses!'.format(color))
             self.quit()
-        color_val = COLOR[color]
+        color_val = COLOR[color.lower()]
         y = Y_AXIS[vertex[0].upper()]
-        x = X_AXIS[vertex[1:]]
+        # x = X_AXIS[vertex[1:]]
+        x = Y_AXIS[vertex[1:].upper()]
         p = Point(x, y)
         if not is_legal(self.go, p, color_val):
             print('Move illegal, play the stone at the other places: ')
@@ -214,14 +219,14 @@ class Engine(object):
 
     def genmove(self, color):
         """
-        Notice that ‚Äúpass‚Äù is a valid vertex and should be returned
-        if the engine wants to pass. Use ‚Äúresign‚Äù if you want to
+        Notice that °∞pass°± is a valid vertex and should be returned
+        if the engine wants to pass. Use °∞resign°± if you want to
         give up the game. The controller is allowed to use this
         command for either color, regardless who played the last
         move.
         :param color:color color - Color for which to generate a move.
         :return:vertex|string vertex - Vertex where the move was
-        played or the string ‚Äúresign‚Äù.
+        played or the string °∞resign°±.
         """
         # TODO
         return
@@ -240,7 +245,6 @@ class Engine(object):
         """
         last_move = self.move_stack.pop()
         vertex = last_move.split()[1]
-        # print(vertex)
         y = Y_AXIS[vertex[0].upper()]
         x = X_AXIS[vertex[1:]]
         self.go.set_color(0, Point(x, y))
@@ -274,7 +278,7 @@ class Engine(object):
 
     def final_score(self):
         """
-        ask for the engine‚Äôs opinion about the score
+        ask for the engine°Øs opinion about the score
         :return:string score - Score as described in section 4.3.
         """
         score_black: int = 0
@@ -320,11 +324,12 @@ class Engine(object):
         :return:vertex*& stones - Stones with the requested status.
 
         """
+        # TODO do not understand the usefulness
         return
     # ###################################### End of Tournament Commands ################################################
 
     # ###################################### Regression Commands #######################################################
-    def loadsgf(self, filename, move_number):
+    def loadsgf(self, filename, move_number=0):
         """
         Due to the syntactical limitations of this protocol, the
         filename cannot include spaces, hash signs (#), or control
@@ -338,7 +343,9 @@ class Engine(object):
         :param move_number:int move number - Optional move number.
         :return:None
         """
-        # TODO currently not useful
+        # sgf_string: str
+        with open(filename, 'r') as f:
+            self.collection = sgf.parse(f.read())
         return
 
     def reg_genmove(self, color):
@@ -349,7 +356,7 @@ class Engine(object):
         regression fluctuations.
         :param color:color color - Color for which to generate a move.
         :return:vertex|string vertex - Vertex where the engine would
-        want to play a move or the string ‚Äúresign‚Äù.
+        want to play a move or the string °∞resign°±.
         """
         return
     # ###################################### End of Regression Commands ################################################

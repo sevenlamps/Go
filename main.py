@@ -2,21 +2,28 @@ import go
 from go import *
 from controller import Player
 from engine import Engine
+from rule import is_movable
 
 
 if __name__ == '__main__':
-    move_stack = []
-    new_engine = Engine(move_stack, 7.5, 0)
+    move_stack: List = []
+    new_engine: Engine = Engine(move_stack, 7.5, 0)
     new_engine.showboard()
 
-    player_b = Player(Color('black'))
-    player_w = Player(Color('white'))
+    player_b: Player = Player(Color('black'))
+    player_w: Player = Player(Color('white'))
 
-    while True:
+    color = 0
+    while is_movable(new_engine.go, color):
 
         while player_b.move(new_engine, Vertex(input())) == 1:
             pass
-        new_engine.showboard()
+        color += 1
+        color %= 2
         while player_w.move(new_engine, Vertex(input())) == 1:
             pass
-        new_engine.showboard()
+        color += 1
+        color %= 2
+
+    new_engine.final_score()
+
