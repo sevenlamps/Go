@@ -62,36 +62,38 @@ class GTP_connection:
     #   infile          File to read from
 
     def __init__(self, command):
-        try:
-            # infile, outfile = subprocess.Popen(command)
-            self.proc = subprocess.Popen(command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-        except TypeError:
-            print("popen failed")
-            sys.exit(1)
+        self.command = command
         # self.infile = infile
         # self.outfile = outfile
         # self.infile, self.outfile = proc.stdin, proc.stdout
 
     def exec_cmd(self, cmd):
+        try:
+            # infile, outfile = subprocess.Popen(command)
+            self.proc = subprocess.Popen(self.command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+        except TypeError:
+            print("popen failed")
+            sys.exit(1)
         global debug
 
         if debug:
             sys.stderr.write("GTP command: " + cmd + "\n")
         # self.outfile.write(cmd + "\n\n")
         # self.outfile.flush()
-        self.proc.communicate(cmd)
-        result = ""
+        line, errs = self.proc.communicate(cmd)
+        result = line
+        print(result)
         # line = self.infile.readline()
-        line = self.proc.stdin.readline()
-        while line != "\n":
-            result = result + line
-            line = self.proc.stdin.readline()
+        # line = self.proc.stdin.readline()
+        # while line != "\n":
+        #     result = result + line
+        #     line = self.proc.stdin.readline()
         if debug:
             sys.stderr.write("Reply: " + line + "\n")
 
         # Remove trailing newline from the result
-        if result[-1] == "\n":
-            result = result[:-1]
+        # if result[-1] == "\n":
+        #     result = result[:-1]
 
         if len(result) == 0:
             return "ERROR: len = 0"
@@ -235,7 +237,7 @@ class GTP_game:
             self.sgffilestart = ""
 
     def init_endgame_contest_game(self):
-        infile = open(self.endgamefile)
+        infile = open(self.endgamefile, 'r')
         if not infile:
             print("Couldn't read " + self.endgamefile)
             sys.exit(2)
