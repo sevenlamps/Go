@@ -32,13 +32,14 @@ import sys
 import string
 import re
 
-debug = 0
+debug: int = 0
 
 
 def coords_to_sgf(size, board_coords):
     global debug
 
-    board_coords = string.lower(board_coords)
+    # board_coords = string.lower(board_coords)
+    board_coords = board_coords.lower()
     if board_coords == "pass":
         return ""
     if debug:
@@ -62,25 +63,29 @@ class GTP_connection:
 
     def __init__(self, command):
         try:
-            infile, outfile = subprocess.Popen(command)
-        except:
+            # infile, outfile = subprocess.Popen(command)
+            self.proc = subprocess.Popen(command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+        except TypeError:
             print("popen failed")
             sys.exit(1)
-        self.infile = infile
-        self.outfile = outfile
+        # self.infile = infile
+        # self.outfile = outfile
+        # self.infile, self.outfile = proc.stdin, proc.stdout
 
     def exec_cmd(self, cmd):
         global debug
 
         if debug:
             sys.stderr.write("GTP command: " + cmd + "\n")
-        self.outfile.write(cmd + "\n\n")
-        self.outfile.flush()
+        # self.outfile.write(cmd + "\n\n")
+        # self.outfile.flush()
+        self.proc.communicate(cmd)
         result = ""
-        line = self.infile.readline()
+        # line = self.infile.readline()
+        line = self.proc.stdin.readline()
         while line != "\n":
             result = result + line
-            line = self.infile.readline()
+            line = self.proc.stdin.readline()
         if debug:
             sys.stderr.write("Reply: " + line + "\n")
 
@@ -114,6 +119,7 @@ class GTP_player:
         return self.connection.exec_cmd("known_command " + command) == "true"
 
     def genmove(self, color):
+        command: str
         if color[0] in ["b", "B"]:
             command = "black"
         elif color[0] in ["w", "W"]:
@@ -152,14 +158,17 @@ class GTP_player:
             result = self.connection.exec_cmd("place_free_handicap %d"
                                               % (handicap))
 
-        return string.split(result, " ")
+        # return string.split(result, " ")
+        return result.split(" ")
 
     def loadsgf(self, endgamefile, move_number):
-        self.connection.exec_cmd(string.join(["loadsgf", endgamefile,
-                                              str(move_number)]))
+        # self.connection.exec_cmd(string.join(["loadsgf", endgamefile,
+        #                                       str(move_number)]))
+        self.connection.exec_cmd(["loadsgf", endgamefile, str(move_number)])
 
     def list_stones(self, color):
-        return string.split(self.connection.exec_cmd("list_stones " + color), " ")
+        # return string.split(self.connection.exec_cmd("list_stones " + color), " ")
+        return self.connection.exec_cmd("list_stones " + color).split(" ")
 
     def quit(self):
         return self.connection.exec_cmd("quit")
@@ -231,7 +240,7 @@ class GTP_game:
             print("Couldn't read " + self.endgamefile)
             sys.exit(2)
         sgflines = infile.readlines()
-        infile.close
+        infile.close()
         size = re.compile("SZ\[[0-9]+\]")
         move = re.compile(";[BW]\[[a-z]{0,2}\]")
         sgf_start = []
@@ -245,8 +254,9 @@ class GTP_game:
                 line = line[match.end():]
                 match = move.search(line)
         self.endgame_start = len(sgf_start) - endgame_start_at
-        self.sgffilestart = ";" + string.join(
-            sgf_start[:self.endgame_start - 1], "") + "\n"
+        # self.sgffilestart = ";" + string.join(
+        #     sgf_start[:self.endgame_start - 1], "") + "\n"
+        self.sgffilestart = ";" + "".join(sgf_start[:self.endgame_start - 1]) + "\n"
         if self.endgame_start % 2 == 0:
             self.first_to_play = "W"
         else:
@@ -368,7 +378,8 @@ class GTP_game:
                     break
                 else:
                     self.moves.append(move)
-                    if string.lower(move[:4]) == "pass":
+                    # if string.lower(move[:4]) == "pass":
+                    if move[:4].lower() == "pass":
                         passes = passes + 1
                         if verbose >= 1:
                             print("Black passes")
@@ -391,7 +402,8 @@ class GTP_game:
                     break
                 else:
                     self.moves.append(move)
-                    if string.lower(move[:4]) == "pass":
+                    # if string.lower(move[:4]) == "pass":
+                    if move[:4].lower() == "pass":
                         passes = passes + 1
                         if verbose >= 1:
                             print("White passes")
