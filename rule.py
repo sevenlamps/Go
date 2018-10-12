@@ -1,4 +1,4 @@
-from constants import *
+from utility import *
 from error import *
 from go import *
 
@@ -145,12 +145,9 @@ def get_chain(board: Board, p: Point) -> Chain:
     return Chain(stones, liberties)
 
 
-def is_movable(board: Board, color_val: int) -> bool:
-    for i, row in enumerate(board.state):
-        for j, item in enumerate(row):
-            if is_legal(board, Point(i, j), color_val):
-                return True
-    return False
+def movable_points(board: Board, color_val: int) -> List:
+    movables: List = [is_legal(board, Point(i, j), color_val) for i, j in board.state]
+    return movables
 
 
 def estimate_score(board: Board, color_val: int) -> int:

@@ -3,7 +3,7 @@ import logging
 import numpy as np
 from go import *
 import threading
-from constants import *
+from utility import *
 from error import *
 from rule import *
 import sgf

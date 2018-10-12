@@ -2,7 +2,7 @@ import go
 from go import *
 from controller import Player
 from engine import Engine
-from rule import is_movable
+from rule import movable_points
 
 
 if __name__ == '__main__':
@@ -14,7 +14,7 @@ if __name__ == '__main__':
     player_w: Player = Player(Color('white'))
 
     color = 0
-    while is_movable(new_engine.go, color):
+    while movable_points(new_engine.go, color):
 
         while player_b.move(new_engine, Vertex(input())) == 1:
             pass

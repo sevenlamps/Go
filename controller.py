@@ -1,6 +1,6 @@
 from go import *
 from engine import Engine
-from constants import *
+from utility import *
 import time
 
 
