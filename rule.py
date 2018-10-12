@@ -16,6 +16,19 @@ def get_neighbors(p: Point) -> List[Point]:
     return neighbors
 
 
+def get_diagonals(p: Point) -> List[Point]:
+    diagonals: List[Point] = []
+    if p.x > 0 and p.y > 0:
+        diagonals.append(Point(p.x - 1, p.y - 1))
+    if p.x > 0 and p.y < BOARD_LENGTH - 1:
+        diagonals.append(Point(p.x - 1, p.y + 1))
+    if p.x < BOARD_LENGTH - 1 and p.y > 0:
+        diagonals.append(Point(p.x + 1, p.y - 1))
+    if p.x < BOARD_LENGTH - 1 and p.y < BOARD_LENGTH - 1:
+        diagonals.append(Point(p.x + 1, p.y + 1))
+    return diagonals
+
+
 def get_liberties(board: Board, p: Point) -> Set[Point]:
     liberties: Set[Point] = set()
     color_val: int = board.get_color(p)
@@ -133,14 +146,18 @@ def get_chain(board: Board, p: Point) -> Chain:
 
 
 def is_movable(board: Board, color_val: int) -> bool:
-    for i, row in enumerate(board.board):
+    for i, row in enumerate(board.state):
         for j, item in enumerate(row):
             if is_legal(board, Point(i, j), color_val):
                 return True
     return False
 
 
-def is_eye(board: Board, p: Point) -> bool:
-    bulk: Set[Point] = get_chain_points(board, p)
+def estimate_score(board: Board, color_val: int) -> int:
+    score: int = 0
+
+    return score
+
+
 
 

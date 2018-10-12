@@ -113,7 +113,7 @@ class Engine(object):
 
         :return: None
         """
-        self.go.board = np.zeros(BOARD_SIZE, dtype=uint)
+        self.go.state = np.zeros(BOARD_SIZE, dtype=uint)
         self.go.captured_b = 0
         self.go.captured_w = 0
         return
@@ -285,13 +285,13 @@ class Engine(object):
         score_white: int = 0
         chains_black: List[Chain] = []
         chains_white: List[Chain] = []
-        for i, row in enumerate(self.go.board):
+        for i, row in enumerate(self.go.state):
             for j, col in enumerate(row):
-                if self.go.board[i][j] == COLOR['black']:
+                if self.go.state[i][j] == COLOR['black']:
                     temp_black: Chain = get_chain(self.go, Point(i, j))
                     if temp_black not in chains_black:
                         chains_black.append(temp_black)
-                if self.go.board[i][j] == COLOR['white']:
+                if self.go.state[i][j] == COLOR['white']:
                     temp_white: Chain = get_chain(self.go, Point(i, j))
                     if temp_white not in chains_white:
                         chains_white.append(temp_white)
@@ -372,8 +372,10 @@ class Engine(object):
         :return:string*& board - A diagram of the board position.
         """
         print('\n\n')
-        str_board = np.array([[STONE_SYMBOL[val] for val in row] for row in self.go.board])
-        print('  '.join(['\tA', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S']))
+        str_board = np.array([[STONE_SYMBOL[val] for val in row] for row in self.go.state])
+        alpha: List = ['\tA', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S']
+        last_move: Move = self.move_stack[-1] if len(self.move_stack) > 0 else None
+        print('  '.join(alpha) + '    Last move: {}'.format(last_move))
         for index, line in enumerate(str_board):
             if index < 9:
                 new_line = np.concatenate(([str(index + 1)+' '], line, [str(index + 1)]))

@@ -47,18 +47,18 @@ class Chain(NamedTuple):
 class Board(object):
     def __init__(self):
         self.size: uint = BOARD_SIZE[0] * BOARD_SIZE[1]  # 19 * 19 board
-        self.board: np.ndarray = np.zeros(BOARD_SIZE, dtype=uint)
+        self.state: np.ndarray = np.zeros(BOARD_SIZE, dtype=uint)
         self.ko_point: Point = None
         self.captured_b: int = 0
         self.captured_w: int = 0
 
     def get_color(self, p: Point) -> int:
         # TODO what if a user wrongly keys in
-        return self.board[p.x][p.y]
+        return self.state[p.x][p.y]
 
     def set_color(self, color_val: int, p: Point):
         # TODO what if a user wrongly keys in
-        self.board[p.x][p.y] = color_val
+        self.state[p.x][p.y] = color_val
         return
 
     def update_captured(self, color_val: int, number_of_stones: int):
