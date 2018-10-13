@@ -3,6 +3,12 @@ from error import *
 from go import *
 
 
+DEFAULT_KOMI: float = 7.5
+BLACK_WIN: int = 1
+WHITE_WIN: int = -1
+DRAW: int = 0
+
+
 def get_neighbors(p: Point) -> List[Point]:
     neighbors: List[Point] = []
     if p.x > 0:
@@ -145,16 +151,61 @@ def get_chain(board: Board, p: Point) -> Chain:
     return Chain(stones, liberties)
 
 
+def make_move(board: Board, color_val: int, p: Point):
+    board.set_color(color_val, p)
+    for neighbor in get_neighbors(p):
+        if board.get_color(neighbor) == color_val * -1:
+            enemy = get_chain(board, neighbor)
+            if len(enemy.liberties) == 0:
+                for point in enemy.stones:
+                    board.set_color(COLOR['empty'], point)
+                    print('updated')
+                update_captured(board, color_val * -1, len(enemy.stones))
+                if len(enemy.stones) == 1:
+                    board.ko_point = enemy.stones.pop()
+                else:
+                    board.ko_point = None
+        else:
+            board.ko_point = None
+
+
+def update_captured(board: Board, color_val: int, number_of_stones: int):
+    if color_val == COLOR['black']:
+        board.captured_b += number_of_stones
+    elif color_val == COLOR['white']:
+        board.captured_w += number_of_stones
+
+
 def movable_points(board: Board, color_val: int) -> List:
-    movables: List = [is_legal(board, Point(i, j), color_val) for i, j in board.state]
+    movables: List = [Point(i, j) for i, j in range(BOARD_LENGTH) if is_legal(board, Point(i, j), color_val)]
     return movables
 
 
-def estimate_score(board: Board, color_val: int) -> int:
-    score: int = 0
+def get_final_score(board: Board, color_val: int) -> float:
+    score: float = 0
+    chains: List[Chain] = []
+    for i, row in enumerate(board.state):
+        for j, col in enumerate(row):
+            if board.state[i][j] == color_val:
+                temp: Chain = get_chain(board, Point(i, j))
+                if temp not in chains:
+                    chains.append(temp)
 
+    chain_empty: Set[Point] = set()
+    for chain in chains:
+        score += len(chain.stones)
+        for p_empty in chain.liberties:
+            chain_empty = chain_empty.union(get_chain_points(board, p_empty))
+    score += len(chain_empty)
+    # print('black: {}'.format(score))
     return score
 
 
-
-
+def get_reward(score_b: float, score_w: float, komi=DEFAULT_KOMI) -> int:
+    result: float = score_b - score_w - komi
+    if result > 0:
+        return BLACK_WIN
+    elif result == 0:
+        return DRAW
+    else:
+        return WHITE_WIN

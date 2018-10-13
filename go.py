@@ -61,9 +61,4 @@ class Board(object):
         self.state[p.x][p.y] = color_val
         return
 
-    def update_captured(self, color_val: int, number_of_stones: int):
-        if color_val == COLOR['black']:
-            self.captured_b += number_of_stones
-        elif color_val == COLOR['white']:
-            self.captured_w += number_of_stones
 

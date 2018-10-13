@@ -199,22 +199,8 @@ class Engine(object):
             print('Move illegal, play the stone at the other places: ')
             return 1
         else:
-            self.go.set_color(color_val, p)
+            make_move(self.go, color_val, p)
             self.move_stack.append(move)
-            for neighbor in get_neighbors(p):
-                if self.go.get_color(neighbor) == color_val * -1:
-                    enemy = get_chain(self.go, neighbor)
-                    if len(enemy.liberties) == 0:
-                        for point in enemy.stones:
-                            self.go.set_color(COLOR['empty'], point)
-                            print('updated')
-                        self.go.update_captured(color_val * -1, len(enemy.stones))
-                        if len(enemy.stones) == 1:
-                            self.go.ko_point = enemy.stones.pop()
-                        else:
-                            self.go.ko_point = None
-                else:
-                    self.go.ko_point = None
         return 0
 
     def genmove(self, color):
@@ -281,35 +267,10 @@ class Engine(object):
         ask for the engine¡¯s opinion about the score
         :return:string score - Score as described in section 4.3.
         """
-        score_black: int = 0
-        score_white: int = 0
-        chains_black: List[Chain] = []
-        chains_white: List[Chain] = []
-        for i, row in enumerate(self.go.state):
-            for j, col in enumerate(row):
-                if self.go.state[i][j] == COLOR['black']:
-                    temp_black: Chain = get_chain(self.go, Point(i, j))
-                    if temp_black not in chains_black:
-                        chains_black.append(temp_black)
-                if self.go.state[i][j] == COLOR['white']:
-                    temp_white: Chain = get_chain(self.go, Point(i, j))
-                    if temp_white not in chains_white:
-                        chains_white.append(temp_white)
-        chainb_empty: Set[Point] = set()
-        chainw_empty: Set[Point] = set()
-        for chain_black in chains_black:
-            score_black += len(chain_black.stones)
-            for p_empty in chain_black.liberties:
-                chainb_empty = chainb_empty.union(get_chain_points(self.go, p_empty))
-        for chain_white in chains_white:
-            score_white += len(chain_white.stones)
-            for p_empty in chain_white.liberties:
-                chainw_empty = chainw_empty.union(get_chain_points(self.go, p_empty))
-        score_black += len(chainb_empty)
-        print('black: {}'.format(score_black))
-        score_white += len(chainw_empty)
-        print('white: {}'.format(score_white))
-        score_difference: float = float(score_black - score_white) - self.komi
+        score_black: float = get_final_score(self.go, COLOR['black'])
+        score_white: float = get_final_score(self.go, COLOR['white'])
+
+        score_difference: float = score_black - score_white - self.komi
         if score_difference > 0:
             return 'B+{}'.format(score_difference)
         elif score_black < score_white + self.komi:

@@ -5,7 +5,7 @@ from controller import Player
 
 
 move_stack = []
-new_engine = Engine(move_stack, 7.5, 0)
+new_engine = Engine(move_stack, DEFAULT_KOMI, 0)
 new_engine.showboard()
 
 player_b = Player(Color('black'))
