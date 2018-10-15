@@ -52,13 +52,17 @@ player_w = Player(Color('white'))
 # print(new_engine.final_score())
 
 
-new_engine.loadsgf('sgf_files/LiChangHao_VS_CaoXunXuan_191/李昌镐曹薰铉激斗谱/426.sgf')
+# new_engine.loadsgf('sgf_files/LiChangHao_VS_CaoXunXuan_191/李昌镐曹薰铉激斗谱/426.sgf')
+#
+# for cnt, node in enumerate(new_engine.collection.children[0].nodes[1:]):
+#     move: Move = Move('{}{}'.format(node.current_property, node.current_prop_value[0]))
+#     new_engine.play(Move(move))
+#     new_engine.showboard()
+#
+# new_engine.final_score()
+#
+# print('hi')
 
-for cnt, node in enumerate(new_engine.collection.children[0].nodes[1:]):
-    move: Move = Move('{}{}'.format(node.current_property, node.current_prop_value[0]))
-    new_engine.play(Move(move))
-    new_engine.showboard()
 
-new_engine.final_score()
 
-print('hi')
+
